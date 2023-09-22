@@ -41,18 +41,17 @@ int main(int argc, char *argv[]){
         printf("Client connected to server.\n");
     }
 
-    // send a message to the server and receive a response and output in the terminal
+    // send a message to the server
     char message[MAXBUF] = "client was able to connect to server";
     char response[MAXBUF];
-    while(1){
-        send(sock, message, strlen(message), 0);
-        recv(sock, response, MAXBUF, 0);
-        printf("Client received message: %s\n", response);
+    send(sock, message, strlen(message), 0);
+    
+    // receive a response and output in the terminal
+    recv(sock, response, MAXBUF, 0);
+    printf("Client received message: %s\n", response);
 
-        // close the connection
-        shutdown(sock, SHUT_RDWR);
-    }
-
+    // close the connection
+    shutdown(sock, SHUT_RDWR);
 
     return 0;
 
