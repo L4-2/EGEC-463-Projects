@@ -1,4 +1,5 @@
 // linux echo client
+// build using gcc linux_echoclient.c -o [executable name] and run using ./[executable name] [ip address]
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -47,7 +48,11 @@ int main(int argc, char *argv[]){
         send(sock, message, strlen(message), 0);
         recv(sock, response, MAXBUF, 0);
         printf("Client received message: %s\n", response);
+
+        // close the connection
+        shutdown(sock, SHUT_RDWR);
     }
+
 
     return 0;
 
