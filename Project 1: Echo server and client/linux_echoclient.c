@@ -6,6 +6,7 @@
 #include <string.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include <unistd.h>
 
 #define MAXBUF 256
 
@@ -41,6 +42,9 @@ int main(int argc, char *argv[]){
         printf("Client connected to server.\n");
     }
 
+    // the server will send a message to the client saying it connected and waits with a delay(2000) before it start listening for a message from the client, so we need to wait for the server to start listening before we send a message.
+    sleep(2);
+    
     // send a message to the server
     char message[MAXBUF] = "client was able to connect to server";
     char response[MAXBUF];
