@@ -1,5 +1,6 @@
 // linux echo client
 // build using gcc linux_echoclient.c -o [executable name] and run using ./[executable name] [ip address]
+// refrences used: https://github.com/saul-h/file-server/blob/master/tcp_ip_client.c & https://pubs.opengroup.org/onlinepubs/7908799/xns/syssocket.h.html
 
 #include <stdio.h>
 #include <stdlib.h>
