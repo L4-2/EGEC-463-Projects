@@ -43,6 +43,8 @@ int main()
         exit(1);
     }
 
+    printf("waiting for client...\n");
+
     // accepting
     SOCKET clientsocket;
     struct sockaddr_in clientaddr;
