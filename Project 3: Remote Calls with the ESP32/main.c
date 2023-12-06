@@ -16,7 +16,8 @@
 
 char IP[] = "192.168.137.243";
 
-char temp_unit;
+// set the default temperature unit to fahrenheit
+char temp_unit = 'f';
 
 struct subscribe_params
 {
@@ -135,8 +136,8 @@ int readADC()
         // convert the response to a float and print the temperature
         float ADC = convert_temp(atoi(response));
 
-        // use the convert_temp function to convert the ADC to temperature and print it
-        printf("Temperature: %f\n", ADC);
+        // use the convert_temp function to convert the ADC to temperature and print it and put unit using the temp_unit variable
+        printf("Temperature: %.2f%c\n", ADC, temp_unit);
 
         // disconnect from the server
         shutdown(sock, SHUT_RDWR);
@@ -217,7 +218,7 @@ int main()
         if (strcmp(command, "toggle") == 0)
         {
             char color[MAXBUF];
-            printf("Please enter a color (red or white)\n");
+            printf("Please enter a color (green or white)\n");
             scanf("%s", color);
             toggle_led(color);
         }
@@ -247,6 +248,10 @@ int main()
         // if the user enters exit, exit the program
         else if (strcmp(command, "exit") == 0)
         {
+            // clean all the threads just in case
+            pthread_exit(NULL);
+
+
             printf("Exiting program.\n");
             exit(0);
         }
