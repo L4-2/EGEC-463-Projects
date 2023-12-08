@@ -1,6 +1,7 @@
-// linux echo client
-// build using gcc linux_echoclient.c -o [executable name] and run using ./[executable name] [ip address]
-// refrences used: https://github.com/saul-h/file-server/blob/master/tcp_ip_client.c & https://pubs.opengroup.org/onlinepubs/7908799/xns/syssocket.h.html
+// Lingesh Kumar
+// linux ESP32 client
+// build using gcc [filename].c -o [executable name] and run using ./[executable name]
+// refrences used: https://www.youtube.com/watch?v=It0OFCbbTJE, https://www.geeksforgeeks.org/thread-functions-in-c-c/, https://stackoverflow.com/questions/2156353/how-do-you-query-a-pthread-to-see-if-it-is-still-running, my father
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -14,11 +15,16 @@
 
 #define PORT 80
 
+// set the IP address of the server
 char IP[] = "192.168.137.243";
 
 // set the default temperature unit to fahrenheit
 char temp_unit = 'f';
 
+// global variable to keep track of the number of threads running
+int thread_count = 0;
+
+// struct for passing parameters to the thread
 struct subscribe_params
 {
     int x;
@@ -125,7 +131,6 @@ int readADC()
     }
     else
     {
-
         // send 'read' to the server
         char message[MAXBUF] = "read";
         send(sock, message, strlen(message), 0);
@@ -156,6 +161,7 @@ void *subscribe_thread(void *arg)
         sleep(params->y);
     }
     free(arg);
+    thread_count--;
     return NULL;
 }
 
@@ -187,25 +193,34 @@ void subscribe(int x, int y)
     else
     {
         // only create a thread if it is the only thread running
-        // create a thread to send readADC() every y seconds
-        pthread_t thread_id;
-        pthread_attr_t attr;
-        pthread_attr_init(&attr);
-        pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+        if (thread_count == 0)
+        {
+            thread_count++;
 
-        struct subscribe_params *params = malloc(sizeof(struct subscribe_params));
-        params->x = x;
-        params->y = y;
-        pthread_create(&thread_id, &attr, subscribe_thread, params);
+            // create a thread to send readADC() every y seconds
+            pthread_t thread_id;
+            pthread_attr_t attr;
+            pthread_attr_init(&attr);
+            pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
 
-        pthread_attr_destroy(&attr);
+            struct subscribe_params *params = malloc(sizeof(struct subscribe_params));
+            params->x = x;
+            params->y = y;
+            pthread_create(&thread_id, &attr, subscribe_thread, params);
+            pthread_attr_destroy(&attr);
+        }
+        else
+        {
+            printf("Only one thread can run at a time.\n");
+            return;
+        }
     }
 }
 
 int main()
 {
 
-    printf("Welcome to the temperature sensor client.\n");
+    printf("ESP32 temperature sensor client.\n");
     printf("Please enter a command (toggle, read, subscribe, set_u, exit)\n");
 
     char command[MAXBUF];
@@ -230,7 +245,7 @@ int main()
         {
             readADC();
         }
-        // if the user enters subscribe, use the first value passed as the number of readings and the second value as the interval between readings IE: subscribe 5 2 will get 5 readings every 2 seconds
+        // if the user enters subscribe, ask for the amount of readings and the interval between readings and subscribe
         else if (strcmp(command, "subscribe") == 0)
         {
             int x, y;
