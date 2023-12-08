@@ -236,7 +236,7 @@ int main()
         if (strcmp(command, "toggle") == 0)
         {
             char color[MAXBUF];
-            printf("Please enter a color (green or white)\n");
+            printf("Please enter a color (green or red)\n");
             scanf("%s", color);
             toggle_led(color);
         }
