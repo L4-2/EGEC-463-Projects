@@ -16,7 +16,7 @@
 #define PORT 80
 
 // set the IP address of the server
-char IP[] = "192.168.137.243";
+char IP[] = "";
 
 // set the default temperature unit to fahrenheit
 char temp_unit = 'f';
